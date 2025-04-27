@@ -1,0 +1,292 @@
+<!DOCTYPE html>  
+<html lang="fa" dir="rtl">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">  
+  <title>فرم ثبت ملک</title>  
+  <style>  
+    @font-face {  
+      font-family: 'BYekan';  
+      src: url('fonts/byekan.woff') format('woff');  
+      font-display: swap;  
+    }  
+    * { box-sizing: border-box; margin: 0; padding: 0; }  
+    body {  
+      background: #EFEFEF;  
+      font-family: 'BYekan', sans-serif;  
+      direction: rtl;  
+      display: flex;  
+      flex-direction: column;  
+      min-height: 100vh;  
+      padding-bottom: 70px;  
+    }  
+    .option-box, .form-container {  
+      background: #fff;  
+      margin: 8px 5px;  
+      border-radius: 20px;  
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);  
+      text-align: center;  
+    }  
+    .option-box { padding: 10px 20px 20px; }  
+    .option-box h3, .form-container h3 {  
+      font-size: 1.2rem;  
+      color: #0E47A1;  
+      margin-bottom: 10px;  
+    }  
+    .transaction-btns {  
+      display: flex;  
+      justify-content: space-between;  
+      gap: 10px;  
+      flex-wrap: wrap;  
+    }  
+    .transaction-btns button {  
+      flex: 1;  
+      min-width: 120px;  
+      height: 40px;  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      padding: 10px 0;  
+      background: #E4F1FC;  
+      border: 2px solid #E4F1FC;  
+      border-radius: 20px;  
+      color: #0E47A1;  
+      font-size: 1rem;  
+      cursor: pointer;  
+      transition: .3s;  
+    }  
+    .transaction-btns button.selected {  
+      background: #0E47A1;  
+      color: #fff;  
+      border-color: #0E47A1;  
+    }  
+    .form-container { padding: 20px; margin-bottom: 10px; }  
+    .form-field {  
+      position: relative;  
+      background: #E4F1FC;  
+      border-radius: 20px;  
+      padding: 14px 10px 6px;  
+      margin: 0 5px 20px;  
+      transition: .3s;  
+      border: 2px solid transparent;  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      flex: 1;  
+    }  
+    .form-field input {  
+      width: 100%;  
+      background: transparent;  
+      border: none;  
+      outline: none;  
+      padding: 0;  
+      font-size: 1rem;  
+      color: #000;  
+      text-align: center;  
+    }  
+    .form-field label {  
+      position: absolute;  
+      top: 50%;  
+      left: 0;  
+      right: 0;  
+      transform: translateY(-50%);  
+      text-align: center;  
+      font-size: 1rem;  
+      color: #0E47A1;  
+      pointer-events: none;  
+      transition: .3s all;  
+      padding: 0 8px;  
+      background: transparent;  
+    }  
+    .form-field input:focus ~ label,  
+    .form-field input:not(:placeholder-shown) ~ label {  
+      top: 0;  
+      transform: translateY(-50%) scale(.85);  
+      text-align: right;  
+      right: 15px;  
+      left: auto;  
+      z-index: 1;  
+    }  
+    .phone-field-wrapper {  
+      display: flex;  
+      align-items: center;  
+      width: calc(100% - 10px);  
+      margin: 20px 5px;  
+      gap: 5px;  
+    }  
+    .phone-field-wrapper .form-field { margin: 0; }  
+    .phone-btn {  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      flex: 0 0 40px;  
+      width: 40px;  
+      height: 40px;  
+      background: #E4F1FC;  
+      border: 2px solid #E4F1FC;  
+      border-radius: 50%;  
+      color: #0E47A1;  
+      font-size: 1.2rem;  
+      cursor: pointer;  
+      transition: .3s;  
+    }  
+    .phone-btn:hover { background: #0E47A1; color: #fff; border-color: #0E47A1; }  
+    .phone-btn.minus {  
+      background: #F44336;  
+      border-color: #F44336;  
+      color: #fff;  
+    }  
+    .phone-btn.minus:hover { background: #D32F2F; border-color: #D32F2F; }  
+    .submit-btn-wrapper {  
+      position: fixed;  
+      bottom: 0;  
+      left: 0;  
+      width: 100%;  
+      background: #EFEFEF;  
+      padding: 10px;  
+      text-align: center;      /* افزوده شد برای مرکزچین کردن */  
+      z-index: 10;  
+    }  
+    .submit-btn {  
+      display: inline-block;     /* حفظ ابعاد و حالت دکمه */  
+      width: calc(100% - 20px);  
+      margin: 0 auto;  
+      padding: 12px;  
+      background: #0E47A1;  
+      color: #fff;  
+      border: none;  
+      border-radius: 20px;  
+      font-size: 1.1rem;  
+      cursor: pointer;  
+      transition: .3s;  
+    }  
+    .submit-btn:hover { background: #083074; }  
+    @media (max-width:768px) {  
+      .transaction-btns button { min-width:100px; }  
+    }  
+  </style>  
+</head>  
+<body>  
+  <form>  
+    <!-- نوع معامله -->  
+    <div class="option-box" id="transaction-box">  
+      <h3>نوع معامله</h3>  
+      <div class="transaction-btns">  
+        <button type="button" id="sale-btn" onclick="selectTransaction('sale')">فروش</button>  
+        <button type="button" id="rent-btn" onclick="selectTransaction('rent')">اجاره</button>  
+        <button type="button" id="partnership-btn" onclick="selectTransaction('partnership')">مشارکت</button>  
+        <button type="button" id="pre-sale-btn" onclick="selectTransaction('pre-sale')">پیش فروش</button>  
+      </div>  
+    </div>  
+    <!-- نوع ملک -->  
+    <div class="option-box" id="property-box">  
+      <h3>نوع ملک</h3>  
+      <div class="transaction-btns">  
+        <button type="button" id="apartment-btn" onclick="selectProperty('apartment')">آپارتمان</button>  
+        <button type="button" id="villa-btn" onclick="selectProperty('villa')">ویلا</button>  
+        <button type="button" id="land-btn" onclick="selectProperty('land')">زمین</button>  
+        <button type="button" id="shop-btn" onclick="selectProperty('shop')">مغازه</button>  
+        <button type="button" id="old-btn" onclick="selectProperty('old')">کلنگی</button>  
+        <button type="button" id="warehouse-btn" onclick="selectProperty('warehouse')">سوله</button>  
+        <button type="button" id="yard-btn" onclick="selectProperty('yard')">حیاط دار</button>  
+        <button type="button" id="suite-btn" onclick="selectProperty('suite')">سوئیت</button>  
+      </div>  
+    </div>  
+    <!-- نوع کاربری -->  
+    <div class="option-box" id="usage-box">  
+      <h3>نوع کاربری</h3>  
+      <div class="transaction-btns">  
+        <button type="button" id="residential-btn" onclick="toggleUsage('residential')">مسکونی</button>  
+        <button type="button" id="office-btn" onclick="toggleUsage('office')">اداری</button>  
+        <button type="button" id="commercial-btn" onclick="toggleUsage('commercial')">تجاری</button>  
+        <button type="button" id="office-location-btn" onclick="toggleUsage('office-location')">موقعیت اداری</button>  
+        <button type="button" id="office-deed-btn" onclick="toggleUsage('office-deed')">سند اداری</button>  
+      </div>  
+    </div>  
+    <!-- اطلاعات تماس -->  
+    <div class="form-container" id="contact-box">  
+      <h3>اطلاعات تماس</h3>  
+      <div id="phone-fields">  
+        <div class="phone-field-wrapper" id="phone-wrapper-1">  
+          <div class="form-field" style="max-width:120px;">  
+            <input type="text" id="dir1" name="dir1" placeholder=" ">  
+            <label for="dir1">سمت</label>  
+          </div>  
+          <div class="form-field">  
+            <input type="text" id="phone1" name="phone1" placeholder=" " required pattern="^09\d{9}$" title="فرمت: 09XXXXXXXXX" inputmode="numeric" maxlength="11" oninput="convertDigits(this); this.value=this.value.replace(/\D/g,'').slice(0,11)">  
+            <label for="phone1">شماره تماس</label>  
+          </div>  
+          <button type="button" class="phone-btn plus" onclick="addPhoneField()">+</button>  
+        </div>  
+      </div>  
+    </div>  
+    <!-- اطلاعات ملک -->  
+    <div class="form-container" id="property-info-box">  
+      <h3>اطلاعات ملک</h3>  
+      <div class="form-field">  
+        <input type="text" id="area" name="area" placeholder=" " inputmode="decimal" oninput="convertDigits(this); this.value=this.value.replace(/[^0-9.]/g,'')">  
+        <label for="area">متراژ زمین</label>  
+      </div>  
+      <div class="form-field">  
+        <input type="text" id="building-area" name="building-area" placeholder=" " inputmode="decimal" oninput="convertDigits(this); this.value=this.value.replace(/[^0-9.]/g,'')">  
+        <label for="building-area">متراژ بنا</label>  
+      </div>  
+      <div class="form-field">  
+        <input type="text" id="share-area" name="share-area" placeholder=" " inputmode="decimal" oninput="convertDigits(this); this.value=this.value.replace(/[^0-9.]/g,'')">  
+        <label for="share-area">قدرالسهم</label>  
+      </div>  
+      <div class="form-field">  
+        <input type="text" id="room-count" name="room-count" placeholder=" " inputmode="numeric" oninput="convertDigits(this); this.value=this.value.replace(/\D/g,'')">  
+        <label for="room-count">تعداد اتاق</label>  
+      </div>  
+    </div>  
+    <!-- دکمه ثبت -->  
+    <div class="submit-btn-wrapper">  
+      <button type="submit" class="submit-btn">ثبت اطلاعات</button>  
+    </div>  
+  </form>  
+  <script>  
+    function selectTransaction(type) {  
+      document.querySelectorAll('#transaction-box .transaction-btns button').forEach(b => b.classList.remove('selected'));  
+      document.getElementById(type + '-btn').classList.add('selected');  
+    }  
+    function selectProperty(type) {  
+      document.querySelectorAll('#property-box .transaction-btns button').forEach(b => b.classList.remove('selected'));  
+      document.getElementById(type + '-btn').classList.add('selected');  
+    }  
+    function toggleUsage(type) {  
+      document.getElementById(type + '-btn').classList.toggle('selected');  
+    }  
+    function convertDigits(input) {  
+      let v = input.value;  
+      v = v.replace(/[\u06F0-\u06F9]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x06F0 + 48));  
+      v = v.replace(/[\u0660-\u0669]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x0660 + 48));  
+      input.value = v;  
+    }  
+    let phoneCount = 1;  
+    function addPhoneField() {  
+      if (phoneCount >= 5) return;  
+      phoneCount++;  
+      const container = document.getElementById('phone-fields');  
+      const wrapper = document.createElement('div'); wrapper.className = 'phone-field-wrapper'; wrapper.id = 'phone-wrapper-' + phoneCount;  
+      const dirField = document.createElement('div'); dirField.className = 'form-field'; dirField.style.maxWidth = '120px';  
+      const dirInput = document.createElement('input'); dirInput.type = 'text'; dirInput.id = 'dir' + phoneCount; dirInput.name = 'dir' + phoneCount; dirInput.placeholder = ' ';  
+      const dirLabel = document.createElement('label'); dirLabel.htmlFor = dirInput.id; dirLabel.textContent = 'سمت'; dirField.appendChild(dirInput); dirField.appendChild(dirLabel);  
+      const phoneField = document.createElement('div'); phoneField.className = 'form-field';  
+      const phoneInput = document.createElement('input'); phoneInput.type = 'text'; phoneInput.id = 'phone' + phoneCount; phoneInput.name = 'phone' + phoneCount; phoneInput.placeholder = ' '; phoneInput.required = true; phoneInput.pattern = '^09\\d{9}$'; phoneInput.title = 'فرمت: 09XXXXXXXXX'; phoneInput.setAttribute('inputmode','numeric'); phoneInput.setAttribute('maxlength','11'); phoneInput.oninput = function() { convertDigits(this); this.value=this.value.replace(/\D/g,'').slice(0,11); };  
+      const phoneLabel2 = document.createElement('label'); phoneLabel2.htmlFor = phoneInput.id; phoneLabel2.textContent = phoneCount === 1 ? 'شماره تماس' : 'شماره تماس ' + phoneCount; phoneField.appendChild(phoneInput); phoneField.appendChild(phoneLabel2);  
+      const minusBtn = document.createElement('button'); minusBtn.type = 'button'; minusBtn.className = 'phone-btn minus'; minusBtn.textContent = '-'; minusBtn.onclick = () => removePhoneField(wrapper.id);  
+      wrapper.appendChild(dirField); wrapper.appendChild(phoneField); wrapper.appendChild(minusBtn);  
+      container.appendChild(wrapper);  
+    }  
+    function removePhoneField(id) {  
+      const w = document.getElementById(id); if (!w) return; w.remove(); phoneCount--;  
+      document.querySelectorAll('.phone-field-wrapper').forEach((wrap, i) => {  
+        const idx = i + 1; wrap.id = 'phone-wrapper-' + idx;  
+        const dir = wrap.querySelector('input[id^="dir"]'); const dirLbl = wrap.querySelector('label[for^="dir"]'); dir.id = 'dir' + idx; dir.name = 'dir' + idx; dirLbl.htmlFor = dir.id;  
+        const ph = wrap.querySelector('input[id^="phone"]'); const phLbl = wrap.querySelector('label[for^="phone"]'); ph.id = 'phone' + idx; ph.name = 'phone' + idx; phLbl.htmlFor = ph.id; phLbl.textContent = idx === 1 ? 'شماره تماس' : 'شماره تماس ' + idx;  
+      });  
+    }  
+  </script>  
+</body>  
+</html>
